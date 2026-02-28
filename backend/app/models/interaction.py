@@ -38,3 +38,16 @@ class InteractionModel(SQLModel):
     item_id: int
     kind: str
     created_at: datetime
+
+    # @property
+    # def timestamp(self):
+    #     return self.created_at
+    
+    # # Добавляем в модель возможность сериализовать timestamp
+    # class Config:
+    #     json_encoders = {
+    #         datetime: lambda v: v.isoformat()
+    #     }
+    #     fields = {
+    #         'timestamp': {'exclude': True}  # Не сохраняем в БД
+    #     }
