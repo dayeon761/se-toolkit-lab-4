@@ -41,7 +41,7 @@ useEffect(() => {
   
   console.log('Headers:', headers);
 
-  fetch('http://10.93.25.21:42002/items', { headers })
+  fetch('/items', { headers })
     .then((res) => {
       console.log('Response status:', res.status);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
