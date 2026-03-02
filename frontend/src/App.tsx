@@ -7,6 +7,7 @@ interface Item {
   id: number
   type: string
   title: string
+  description: string
   created_at: string
 }
 
@@ -19,28 +20,44 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (!token) return
+useEffect(() => {
+  if (!token) {
+    console.log('No token, skipping fetch');
+    return;
+  }
 
-    setLoading(true)
-    setError(null)
+  console.log('Token exists:', token);
+  console.log('Token length:', token.length);
+  console.log('First few chars:', token.substring(0, 5));
 
-    fetch('/items', {
-      headers: { Authorization: `Bearer ${token}` },
+  setLoading(true);
+  setError(null);
+
+  // Убедитесь, что заголовки установлены правильно
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+  
+  console.log('Headers:', headers);
+
+  fetch('http://10.93.25.21:42002/items', { headers })
+    .then((res) => {
+      console.log('Response status:', res.status);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
     })
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json()
-      })
-      .then((data: Item[]) => {
-        setItems(data)
-        setLoading(false)
-      })
-      .catch((err: Error) => {
-        setError(err.message)
-        setLoading(false)
-      })
-  }, [token])
+    .then((data) => {
+      console.log('Data received:', data);
+      setItems(data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error('Fetch error:', err);
+      setError(err.message);
+      setLoading(false);
+    });
+}, [token]);
 
   function handleConnect(e: FormEvent) {
     e.preventDefault()
@@ -93,6 +110,7 @@ function App() {
               <th>ID</th>
               <th>Type</th>
               <th>Title</th>
+	      <th>Description</th>
               <th>Created at</th>
             </tr>
           </thead>
@@ -102,6 +120,7 @@ function App() {
                 <td>{item.id}</td>
                 <td>{item.type}</td>
                 <td>{item.title}</td>
+                <td>{item.description}</td>
                 <td>{item.created_at}</td>
               </tr>
             ))}
